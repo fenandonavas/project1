@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+  <meta charset="UTF-8">
+    <title>
+	   App Hibrida 
+    </title>
+
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <style type="text/css">
+.container {
+ clear:both;
+ float:left;
+ overflow:hidden;
+ width:100%;
+}
+
+#menu {
+ float:left;
+ left:50%;
+ list-style-type:none;
+ margin:0 auto;
+ padding:0;
+ position:relative;
+}
+
+.boton_personalizado{
+		    padding: 10px;
+		    font-weight: 600;
+		    font-size: 20px;
+		    
+		    background-color: #1883ba;
+		    border-radius: 6px;
+		    border: 2px solid #0016b0;    
+	} 
+
+	#menu li {
+ float:left;
+ position:relative;
+ right:50%;
+
+		    
+		    padding: 10px;
+		    font-weight: 600;
+		    font-size: 20px;
+		    
+		    background-color: #1883ba;
+		    border-radius: 6px;
+		    border: 2px solid #0016b0;    
+
+}
+
+	li a{
+		text-decoration: none;
+		color: #ffffff;
+	}	
+	</style>
+
+ 		
+</head>  
+     
+<body class="font-cover" id="main">
+
+	<h1><center>App Web con Phonegab y Cordova</center></h1>
+<div class="container">
+ <ul id="menu">
+  <li>
+   <a href="index.html">Inicio</a>
+  </li>
+  <li>
+   <a href="#">Camara</a>
+  </li>
+  <li>
+   <a href="#">Contactos</a>
+  </li>
+ </ul>
+</div>
+	<br>
+	<br>
+		<br>
+	<br>
+<center>
+	<div>
+		<input type="hidden" name="id" id="id" value="">
+		<input type="text" name="documento" id="documento" placeholder="documento">
+	</div>
+		<br>
+	<br>
+	<div>
+		<input type="text" name="nombre" id="nombre" placeholder="Nombre">
+	</div>
+	<br>
+	<br>
+	<div>
+		<input type="text" name="apellido" id="apellido" placeholder="apellido">
+	</div>
+	<br>
+	<br>
+	<div>
+		<input type="email" name="email" id="email" placeholder="email">
+	</div>
+	</center>	
+	<br> 
+	<br>
+	<div>
+		<center><input type="button" class="boton_personalizado" id="guardar" value="Guardar"></center>
+	</div>	 
+	<br> 
+	<br>
+	<div>
+		<center><input type="button" class="boton_personalizado" id="eliminar" value="Eliminar"></center>
+	</div>	 
+	<br> 
+	<br>
+	<br> 
+	<br>			
+</center>
+
+</body>
+
+
+
+
+  <script type="text/javascript" src="js/jquery-3.3.1.js"></script> 
+  <script type="text/javascript">  
+   $(document).ready(function(){
+
+               var datos=[];
+                  datos.push({
+                    "operacion": "ver"
+                  }); 
+              var usuario = {"datos": datos};   
+              var json = JSON.stringify(usuario);
+              //console.log(json);
+              //return false;
+
+              ajax("http://192.168.43.198/AppWeb/php/usuario.php", {"json": json}).done(function(info) {
+
+                if (info) {
+                 	var obj = jQuery.parseJSON(info);
+                 	if (obj.length > 0) {
+                 		for (var i = 0; i < obj.length; i++) {
+                 			   var id = obj[i]["id"];
+                 			   var documento = obj[i]["documento"];
+			                   var nombre = obj[i]["nombre"];
+			                   var apellido = obj[i]["apellido"];
+			                   var email = obj[i]["email"];
+			                   $("#documento").val(documento);
+			                   $("#nombre").val(nombre);
+			                   $("#apellido").val(apellido); 
+			                   $("#email").val(email);   
+			                   $("#id").val(id);                  				
+                 			}
+                 		$("#guardar").val("Actualizar");		
+                 		
+                 	}
+
+                   
+                }
+              });
+
+
+
+            $("#guardar").click(function(){
+            	if ($("#guardar").val() == "Guardar") {
+	            	if ($("#documento").val() == "" || $("#nombre").val() == "" || $("#apellido").val() == "" || $("#email").val() == "") {
+	            		alert("Complete los campos");
+	            	}else{    
+
+		               var datos=[];
+		                  datos.push({
+		                    "operacion": "guardar",
+		                    "documento": $("#documento").val(),
+		                    "nombre": $("#nombre").val(), 
+		                    "apellido": $("#apellido").val(),
+		                    "email": $("#email").val()
+		                  }); 
+		              var usuario = {"datos": datos};   
+		              var json = JSON.stringify(usuario);
+		              console.log(json);
+		              //return false;
+
+		              ajax("http://192.168.43.198/AppWeb/php/usuario.php", {"json": json}).done(function(info) {
+		              	console.log(info);
+
+		                if (info) {
+							alert("Error al Ingresar");
+		                   
+		                }else{
+		                	alert("Datos Ingresados correctamente");
+
+		                }
+		                location.reload(true);
+		              });
+
+		              return false;
+
+	            	}
+	            	       	
+            	}else{
+
+	            	if ($("#id").val() == "" || $("#documento").val() == "" || $("#nombre").val() == "" || $("#apellido").val() == "" || $("#email").val() == "") {
+	            		alert("No se puede Actualizar Campos Faltantes");
+	            	}else{
+
+		               var datos=[];
+		                  datos.push({
+		                    "operacion": "actualizar",
+		                    "documento": $("#documento").val(),
+		                    "nombre": $("#nombre").val(), 
+		                    "apellido": $("#apellido").val(),
+		                    "email": $("#email").val(),
+		                    "id": $("#id").val()
+		                  }); 
+		              var usuario = {"datos": datos};   
+		              var json = JSON.stringify(usuario);
+		              //console.log(json);
+		              //return false;
+
+		              ajax("http://192.168.43.198/AppWeb/php/usuario.php", {"json": json}).done(function(info) {
+		              	//console.log(info);
+		                if (info) {
+							
+		                   alert("Datos Actualizados correctamente");
+		                }else{
+		                	alert("Error al Actualizar");
+		                }
+		                location.reload(true);
+		              });
+
+		              return false;            		
+
+	            	}            		
+
+            	}
+
+
+
+
+              
+          });
+
+            $("#eliminar").click(function(){
+
+            	if ($("#id").val() == "" || $("#documento").val() == "" || $("#nombre").val() == "" || $("#apellido").val() == "" || $("#edad").val() == "") {
+            		alert("Complete los campos o agregue un registro");
+            	}else{
+	               var datos=[];
+	                  datos.push({
+	                    "operacion": "eliminar",
+	                    "id": $("#id").val()
+	                  }); 
+	              var usuario = {"datos": datos};   
+	              var json = JSON.stringify(usuario);
+	              console.log(json);
+	              //return false;
+
+	              ajax("http://192.168.43.198/AppWeb/php/usuario.php", {"json": json}).done(function(info) {
+	              	console.log(info);
+	                if (info) {
+						alert("Error al Eliminar");
+	                   
+	                }else{
+	                	alert("Datos Eliminados correctamente");
+	                }
+	                location.reload(true);
+	              });
+
+	              return false;
+            	}            	
+
+
+              
+          });
+
+
+   }); 
+       function ajax(url, data){
+
+            var ajax = $.ajax({
+                "url": url,
+                "data": data,
+                "type": "POST",
+
+              
+              });
+               return ajax;
+
+          }
+
+
+  </script> 
+
+
+</body>
+</html>
